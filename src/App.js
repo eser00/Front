@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
+import FilmsPage from './FilmsPage';
 
 function App() {
   const [topFilms, setTopFilms] = useState([]);
@@ -14,6 +15,7 @@ function App() {
   const [selectedActor, setSelectedActor] = useState(null);
   const [actorDetails, setActorDetails] = useState(null);
   const [actorDetailsLoading, setActorDetailsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState('home');
 
   useEffect(() => {
     fetchTopRentedFilms();
@@ -82,6 +84,14 @@ function App() {
     setActorDetails(null);
   };
 
+  const navigateToFilms = () => {
+    setCurrentPage('films');
+  };
+
+  const navigateToHome = () => {
+    setCurrentPage('home');
+  };
+
   if (loading) {
     return (
       <div className="app">
@@ -104,10 +114,17 @@ function App() {
     );
   }
 
+  if (currentPage === 'films') {
+    return <FilmsPage onBackToHome={navigateToHome} />;
+  }
+
   return (
     <div className="app">
       <header className="app-header">
         <h1>Film Rental Store</h1>
+        <div className="navigation">
+          <button className="nav-button" onClick={navigateToFilms}>Search Films</button>
+        </div>
         <h2>Top 5 Most Rented Films of All Time</h2>
       </header>
       
