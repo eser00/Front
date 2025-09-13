@@ -11,6 +11,9 @@ function App() {
   const [selectedFilm, setSelectedFilm] = useState(null);
   const [filmDetails, setFilmDetails] = useState(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
+  const [selectedActor, setSelectedActor] = useState(null);
+  const [actorDetails, setActorDetails] = useState(null);
+  const [actorDetailsLoading, setActorDetailsLoading] = useState(false);
 
   useEffect(() => {
     fetchTopRentedFilms();
@@ -56,9 +59,27 @@ function App() {
     }
   };
 
+  const fetchActorDetails = async (actorId) => {
+    try {
+      setActorDetailsLoading(true);
+      const response = await axios.get(`http://localhost:5000/api/actor/${actorId}`);
+      setActorDetails(response.data);
+      setSelectedActor(actorId);
+    } catch (err) {
+      console.error('Error fetching actor details:', err);
+    } finally {
+      setActorDetailsLoading(false);
+    }
+  };
+
   const closeFilmDetails = () => {
     setSelectedFilm(null);
     setFilmDetails(null);
+  };
+
+  const closeActorDetails = () => {
+    setSelectedActor(null);
+    setActorDetails(null);
   };
 
   if (loading) {
@@ -118,11 +139,15 @@ function App() {
           ) : (
             <div className="actors-grid">
               {topActors.map((actor, index) => (
-                <div key={actor.actor_id} className="actor-card">
+                <div 
+                  key={actor.actor_id} 
+                  className="actor-card clickable"
+                  onClick={() => fetchActorDetails(actor.actor_id)}
+                >
                   <div className="actor-rank">#{index + 1}</div>
                   <h3 className="actor-name">{actor.first_name} {actor.last_name}</h3>
                   <p className="actor-films">Films in Store: {actor.film_count}</p>
-                  <p className="actor-rentals">Total Rentals: {actor.total_rentals}</p>
+                  <div className="click-hint">Click for details</div>
                 </div>
               ))}
             </div>
@@ -181,6 +206,53 @@ function App() {
               </div>
             ) : (
               <div className="error">Failed to load film details</div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Actor Details Modal */}
+      {selectedActor && (
+        <div className="modal-overlay" onClick={closeActorDetails}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-button" onClick={closeActorDetails}>×</button>
+            
+            {actorDetailsLoading ? (
+              <div className="loading">Loading actor details...</div>
+            ) : actorDetails ? (
+              <div className="actor-details">
+                <h2 className="actor-details-title">{actorDetails.actor.first_name} {actorDetails.actor.last_name}</h2>
+                
+                <div className="actor-stats">
+                  <div className="stat-card">
+                    <h3>Total Films</h3>
+                    <p className="stat-number">{actorDetails.actor.total_films}</p>
+                  </div>
+                  <div className="stat-card">
+                    <h3>Total Rentals</h3>
+                    <p className="stat-number">{actorDetails.actor.total_rentals}</p>
+                  </div>
+                </div>
+
+                <div className="actor-top-films">
+                  <h3>Top 5 Most Rented Films</h3>
+                  <div className="actor-films-grid">
+                    {actorDetails.topFilms.map((film, index) => (
+                      <div key={film.film_id} className="actor-film-card">
+                        <div className="film-rank-small">#{index + 1}</div>
+                        <h4 className="film-title-small">{film.title}</h4>
+                        <p className="film-year-small">({film.release_year})</p>
+                        <p className="film-rating-small">Rating: {film.rating}</p>
+                        <p className="film-rental-rate-small">Rate: ${film.rental_rate}</p>
+                        <p className="film-rental-count-small">Rented {film.rental_count} times</p>
+                        <p className="film-description-small">{film.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="error">Failed to load actor details</div>
             )}
           </div>
         </div>
