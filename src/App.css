@@ -224,3 +224,84 @@
     padding: 20px;
   }
 }
+
+/* Actors Section Styles */
+.actors-section {
+  margin-top: 50px;
+  padding: 0 20px;
+}
+
+.actors-section h2 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  border-bottom: 2px solid #61dafb;
+  padding-bottom: 10px;
+}
+
+.loading-text {
+  text-align: center;
+  color: #666;
+  font-size: 1.2rem;
+  margin: 40px 0;
+}
+
+.actors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.actor-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+  position: relative;
+  text-align: center;
+}
+
+.actor-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.actor-rank {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #4CAF50;
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.actor-name {
+  color: #333;
+  margin: 20px 0 15px 0;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.actor-films {
+  color: #2196F3;
+  font-weight: bold;
+  margin: 10px 0;
+  font-size: 1.1rem;
+}
+
+.actor-rentals {
+  color: #FF9800;
+  font-weight: bold;
+  margin: 10px 0;
+  font-size: 1.1rem;
+}

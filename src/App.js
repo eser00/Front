@@ -4,7 +4,9 @@ import './App.css';
 
 function App() {
   const [topFilms, setTopFilms] = useState([]);
+  const [topActors, setTopActors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [actorsLoading, setActorsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedFilm, setSelectedFilm] = useState(null);
   const [filmDetails, setFilmDetails] = useState(null);
@@ -12,6 +14,7 @@ function App() {
 
   useEffect(() => {
     fetchTopRentedFilms();
+    fetchTopActors();
   }, []);
 
   const fetchTopRentedFilms = async () => {
@@ -38,6 +41,18 @@ function App() {
       console.error('Error fetching film details:', err);
     } finally {
       setDetailsLoading(false);
+    }
+  };
+
+  const fetchTopActors = async () => {
+    try {
+      setActorsLoading(true);
+      const response = await axios.get('http://localhost:5000/api/top-actors');
+      setTopActors(response.data);
+    } catch (err) {
+      console.error('Error fetching top actors:', err);
+    } finally {
+      setActorsLoading(false);
     }
   };
 
@@ -93,6 +108,25 @@ function App() {
               <div className="click-hint">Click for details</div>
             </div>
           ))}
+        </div>
+
+        {/* Top Actors Section */}
+        <div className="actors-section">
+          <h2>Top 5 Actors from Store Films</h2>
+          {actorsLoading ? (
+            <p className="loading-text">Loading top actors...</p>
+          ) : (
+            <div className="actors-grid">
+              {topActors.map((actor, index) => (
+                <div key={actor.actor_id} className="actor-card">
+                  <div className="actor-rank">#{index + 1}</div>
+                  <h3 className="actor-name">{actor.first_name} {actor.last_name}</h3>
+                  <p className="actor-films">Films in Store: {actor.film_count}</p>
+                  <p className="actor-rentals">Total Rentals: {actor.total_rentals}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </main>
 
