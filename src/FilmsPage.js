@@ -72,7 +72,7 @@ function FilmsPage({ onBackToHome }) {
       
       // Fetch customers and inventory in parallel
       const [customersResponse, inventoryResponse] = await Promise.all([
-        axios.get('http://localhost:5000/api/customers'),
+        axios.get('http://localhost:5000/api/customers-simple'),
         axios.get(`http://localhost:5000/api/film/${filmId}/inventory`)
       ]);
       

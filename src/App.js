@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 import FilmsPage from './FilmsPage';
+import CustomersPage from './CustomersPage';
 
 function App() {
   const [topFilms, setTopFilms] = useState([]);
@@ -118,12 +119,17 @@ function App() {
     return <FilmsPage onBackToHome={navigateToHome} />;
   }
 
+  if (currentPage === 'customers') {
+    return <CustomersPage onBackToHome={navigateToHome} />;
+  }
+
   return (
     <div className="app">
       <header className="app-header">
         <h1>Film Rental Store</h1>
         <div className="navigation">
           <button className="nav-button" onClick={navigateToFilms}>Search Films</button>
+          <button className="nav-button" onClick={() => setCurrentPage('customers')}>Customers</button>
         </div>
         <h2>Top 5 Most Rented Films of All Time</h2>
       </header>
