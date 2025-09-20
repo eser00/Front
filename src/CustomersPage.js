@@ -6,6 +6,8 @@ const CustomersPage = ({ onBackToHome }) => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchType, setSearchType] = useState('name');
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -15,11 +17,17 @@ const CustomersPage = ({ onBackToHome }) => {
     hasPrev: false
   });
 
-  const fetchCustomers = async (page = 1) => {
+  const fetchCustomers = async (page = 1, search = '', type = 'name') => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`http://localhost:5000/api/customers?page=${page}&limit=10`);
+      
+      let url = `http://localhost:5000/api/customers?page=${page}&limit=10`;
+      if (search.trim()) {
+        url += `&search=${encodeURIComponent(search.trim())}&type=${type}`;
+      }
+      
+      const response = await axios.get(url);
       console.log('API Response:', response.data);
       console.log('Customers:', response.data.customers);
       console.log('Pagination:', response.data.pagination);
@@ -39,8 +47,19 @@ const CustomersPage = ({ onBackToHome }) => {
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.totalPages) {
-      fetchCustomers(newPage);
+      fetchCustomers(newPage, searchQuery, searchType);
     }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    fetchCustomers(1, searchQuery, searchType);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery('');
+    setSearchType('name');
+    fetchCustomers(1);
   };
 
   const formatDate = (dateString) => {
@@ -89,6 +108,39 @@ const CustomersPage = ({ onBackToHome }) => {
             </div>
           </div>
         )}
+
+        <div className="search-section">
+          <form onSubmit={handleSearch} className="search-form">
+            <div className="search-controls">
+              <select 
+                value={searchType} 
+                onChange={(e) => setSearchType(e.target.value)}
+                className="search-type-select"
+              >
+                <option value="name">Search by Name</option>
+                <option value="id">Search by Customer ID</option>
+                <option value="first_name">Search by First Name</option>
+                <option value="last_name">Search by Last Name</option>
+              </select>
+              
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={`Enter ${searchType === 'name' ? 'customer name' : searchType === 'id' ? 'customer ID' : searchType === 'first_name' ? 'first name' : 'last name'}...`}
+                className="search-input"
+              />
+              
+              <button type="submit" className="search-button" disabled={loading}>
+                {loading ? 'Searching...' : 'Search'}
+              </button>
+              
+              <button type="button" onClick={clearSearch} className="clear-button">
+                Clear
+              </button>
+            </div>
+          </form>
+        </div>
 
         <div className="customers-table-container">
           <table className="customers-table">

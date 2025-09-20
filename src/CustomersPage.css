@@ -140,6 +140,121 @@
   z-index: 2;
 }
 
+.search-section {
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.search-form {
+  background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+  border-radius: 0;
+  padding: 30px;
+  border: 1px solid rgba(139, 69, 19, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.search-controls {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 15px;
+  align-items: center;
+}
+
+.search-type-select {
+  background: linear-gradient(135deg, #252525 0%, #323232 100%);
+  color: #d4af37;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 12px 15px;
+  border-radius: 0;
+  font-size: 1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 180px;
+}
+
+.search-type-select:focus {
+  outline: none;
+  border-color: #d4af37;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+}
+
+.search-input {
+  background: linear-gradient(135deg, #252525 0%, #323232 100%);
+  color: #e0e0e0;
+  border: 1px solid rgba(139, 69, 19, 0.3);
+  padding: 12px 15px;
+  border-radius: 0;
+  font-size: 1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #d4af37;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+  color: #ffffff;
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.search-button {
+  background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+  color: #1a1a1a;
+  border: 1px solid rgba(139, 69, 19, 0.5);
+  padding: 12px 24px;
+  border-radius: 0;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.search-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #f4d03f 0%, #d4af37 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+}
+
+.search-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.clear-button {
+  background: transparent;
+  color: #c9a96e;
+  border: 2px solid #c9a96e;
+  padding: 12px 24px;
+  border-radius: 0;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.clear-button:hover {
+  background: rgba(201, 169, 110, 0.1);
+  border-color: #d4af37;
+  color: #d4af37;
+  transform: translateY(-2px);
+}
+
 .customers-table-container {
   background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
   border-radius: 0;
