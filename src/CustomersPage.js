@@ -8,6 +8,10 @@ const CustomersPage = ({ onBackToHome }) => {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState('name');
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addLoading, setAddLoading] = useState(false);
+  const [addError, setAddError] = useState(null);
+  const [addSuccess, setAddSuccess] = useState(null);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -60,6 +64,55 @@ const CustomersPage = ({ onBackToHome }) => {
     setSearchQuery('');
     setSearchType('name');
     fetchCustomers(1);
+  };
+
+  const openAddModal = () => {
+    setShowAddModal(true);
+    setAddError(null);
+    setAddSuccess(null);
+  };
+
+  const closeAddModal = () => {
+    setShowAddModal(false);
+    setAddError(null);
+    setAddSuccess(null);
+  };
+
+  const handleAddCustomer = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const customerData = {
+      first_name: formData.get('first_name'),
+      last_name: formData.get('last_name'),
+      email: formData.get('email'),
+      store_id: parseInt(formData.get('store_id'))
+    };
+
+    if (!customerData.first_name || !customerData.last_name || !customerData.email) {
+      setAddError('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      setAddLoading(true);
+      setAddError(null);
+      
+      const response = await axios.post('http://localhost:5000/api/customers', customerData);
+      
+      setAddSuccess('Customer added successfully!');
+      
+      // Refresh the customers list
+      setTimeout(() => {
+        fetchCustomers(1, searchQuery, searchType);
+        closeAddModal();
+      }, 1500);
+      
+    } catch (err) {
+      setAddError(err.response?.data?.error || 'Failed to add customer');
+      console.error('Error adding customer:', err);
+    } finally {
+      setAddLoading(false);
+    }
   };
 
   const formatDate = (dateString) => {
@@ -140,6 +193,12 @@ const CustomersPage = ({ onBackToHome }) => {
               </button>
             </div>
           </form>
+          
+          <div className="add-customer-section">
+            <button onClick={openAddModal} className="add-customer-button">
+              + Add New Customer
+            </button>
+          </div>
         </div>
 
         <div className="customers-table-container">
@@ -196,6 +255,96 @@ const CustomersPage = ({ onBackToHome }) => {
             >
               Next
             </button>
+          </div>
+        )}
+
+        {/* Add Customer Modal */}
+        {showAddModal && (
+          <div className="modal-overlay" onClick={closeAddModal}>
+            <div className="modal-content add-customer-modal" onClick={(e) => e.stopPropagation()}>
+              <button className="close-button" onClick={closeAddModal}>×</button>
+              
+              <h2 className="modal-title">Add New Customer</h2>
+              
+              {addLoading && !addSuccess ? (
+                <div className="loading">Adding customer...</div>
+              ) : (
+                <form onSubmit={handleAddCustomer} className="add-customer-form">
+                  <div className="form-group">
+                    <label htmlFor="first_name">First Name *</label>
+                    <input
+                      type="text"
+                      id="first_name"
+                      name="first_name"
+                      required
+                      className="form-input"
+                      placeholder="Enter first name"
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label htmlFor="last_name">Last Name *</label>
+                    <input
+                      type="text"
+                      id="last_name"
+                      name="last_name"
+                      required
+                      className="form-input"
+                      placeholder="Enter last name"
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label htmlFor="email">Email *</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      required
+                      className="form-input"
+                      placeholder="Enter email address"
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label htmlFor="store_id">Store</label>
+                    <select id="store_id" name="store_id" className="form-select" defaultValue="1">
+                      <option value="1">Store 1</option>
+                      <option value="2">Store 2</option>
+                    </select>
+                  </div>
+                  
+                  {addError && (
+                    <div className="error-message">
+                      {addError}
+                    </div>
+                  )}
+                  
+                  {addSuccess && (
+                    <div className="success-message">
+                      {addSuccess}
+                    </div>
+                  )}
+                  
+                  <div className="form-actions">
+                    <button 
+                      type="button" 
+                      onClick={closeAddModal}
+                      className="cancel-button"
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      type="submit" 
+                      className="confirm-button"
+                      disabled={addLoading}
+                    >
+                      {addLoading ? 'Adding...' : 'Add Customer'}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
           </div>
         )}
       </div>
