@@ -12,6 +12,11 @@ const CustomersPage = ({ onBackToHome }) => {
   const [addLoading, setAddLoading] = useState(false);
   const [addError, setAddError] = useState(null);
   const [addSuccess, setAddSuccess] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState(null);
+  const [editSuccess, setEditSuccess] = useState(null);
+  const [editingCustomer, setEditingCustomer] = useState(null);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -115,6 +120,57 @@ const CustomersPage = ({ onBackToHome }) => {
     }
   };
 
+  const openEditModal = (customer) => {
+    setEditingCustomer(customer);
+    setShowEditModal(true);
+    setEditError(null);
+    setEditSuccess(null);
+  };
+
+  const closeEditModal = () => {
+    setShowEditModal(false);
+    setEditingCustomer(null);
+    setEditError(null);
+    setEditSuccess(null);
+  };
+
+  const handleEditCustomer = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const customerData = {
+      first_name: formData.get('first_name'),
+      last_name: formData.get('last_name'),
+      email: formData.get('email'),
+      store_id: parseInt(formData.get('store_id'))
+    };
+
+    if (!customerData.first_name || !customerData.last_name || !customerData.email) {
+      setEditError('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      setEditLoading(true);
+      setEditError(null);
+      
+      const response = await axios.put(`http://localhost:5000/api/customers/${editingCustomer.customer_id}`, customerData);
+      
+      setEditSuccess('Customer updated successfully!');
+      
+      // Refresh the customers list
+      setTimeout(() => {
+        fetchCustomers(pagination.currentPage, searchQuery, searchType);
+        closeEditModal();
+      }, 1500);
+      
+    } catch (err) {
+      setEditError(err.response?.data?.error || 'Failed to update customer');
+      console.error('Error updating customer:', err);
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
   };
@@ -211,6 +267,7 @@ const CustomersPage = ({ onBackToHome }) => {
                 <th>Store</th>
                 <th>Member Since</th>
                 <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -227,6 +284,14 @@ const CustomersPage = ({ onBackToHome }) => {
                     <span className={`status-badge ${customer.active ? 'active' : 'inactive'}`}>
                       {customer.active ? 'Active' : 'Inactive'}
                     </span>
+                  </td>
+                  <td className="customer-actions">
+                    <button 
+                      onClick={() => openEditModal(customer)}
+                      className="edit-button"
+                    >
+                      Edit
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -340,6 +405,104 @@ const CustomersPage = ({ onBackToHome }) => {
                       disabled={addLoading}
                     >
                       {addLoading ? 'Adding...' : 'Add Customer'}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Edit Customer Modal */}
+        {showEditModal && editingCustomer && (
+          <div className="modal-overlay" onClick={closeEditModal}>
+            <div className="modal-content edit-customer-modal" onClick={(e) => e.stopPropagation()}>
+              <button className="close-button" onClick={closeEditModal}>×</button>
+              
+              <h2 className="modal-title">Edit Customer</h2>
+              
+              {editLoading && !editSuccess ? (
+                <div className="loading">Updating customer...</div>
+              ) : (
+                <form onSubmit={handleEditCustomer} className="edit-customer-form">
+                  <div className="form-group">
+                    <label htmlFor="edit_first_name">First Name *</label>
+                    <input
+                      type="text"
+                      id="edit_first_name"
+                      name="first_name"
+                      required
+                      className="form-input"
+                      defaultValue={editingCustomer.first_name}
+                      placeholder="Enter first name"
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label htmlFor="edit_last_name">Last Name *</label>
+                    <input
+                      type="text"
+                      id="edit_last_name"
+                      name="last_name"
+                      required
+                      className="form-input"
+                      defaultValue={editingCustomer.last_name}
+                      placeholder="Enter last name"
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label htmlFor="edit_email">Email *</label>
+                    <input
+                      type="email"
+                      id="edit_email"
+                      name="email"
+                      required
+                      className="form-input"
+                      defaultValue={editingCustomer.email}
+                      placeholder="Enter email address"
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label htmlFor="edit_store_id">Store</label>
+                    <select 
+                      id="edit_store_id" 
+                      name="store_id" 
+                      className="form-select" 
+                      defaultValue={editingCustomer.store_id}
+                    >
+                      <option value="1">Store 1</option>
+                      <option value="2">Store 2</option>
+                    </select>
+                  </div>
+                  
+                  {editError && (
+                    <div className="error-message">
+                      {editError}
+                    </div>
+                  )}
+                  
+                  {editSuccess && (
+                    <div className="success-message">
+                      {editSuccess}
+                    </div>
+                  )}
+                  
+                  <div className="form-actions">
+                    <button 
+                      type="button" 
+                      onClick={closeEditModal}
+                      className="cancel-button"
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      type="submit" 
+                      className="confirm-button"
+                      disabled={editLoading}
+                    >
+                      {editLoading ? 'Updating...' : 'Update Customer'}
                     </button>
                   </div>
                 </form>

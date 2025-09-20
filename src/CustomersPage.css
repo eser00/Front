@@ -309,7 +309,8 @@
   position: relative;
 }
 
-.add-customer-modal {
+.add-customer-modal,
+.edit-customer-modal {
   max-width: 600px;
 }
 
@@ -552,6 +553,31 @@
   background: #666;
   color: #999;
   border: 1px solid #555;
+}
+
+.customer-actions {
+  text-align: center;
+}
+
+.edit-button {
+  background: linear-gradient(135deg, #c9a96e 0%, #d4af37 100%);
+  color: #1a1a1a;
+  border: 1px solid rgba(139, 69, 19, 0.5);
+  padding: 8px 16px;
+  border-radius: 0;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.edit-button:hover {
+  background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
 }
 
 .pagination {
