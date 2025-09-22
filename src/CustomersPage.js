@@ -17,6 +17,11 @@ const CustomersPage = ({ onBackToHome }) => {
   const [editError, setEditError] = useState(null);
   const [editSuccess, setEditSuccess] = useState(null);
   const [editingCustomer, setEditingCustomer] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
+  const [deleteSuccess, setDeleteSuccess] = useState(null);
+  const [deletingCustomer, setDeletingCustomer] = useState(null);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -171,6 +176,43 @@ const CustomersPage = ({ onBackToHome }) => {
     }
   };
 
+  const openDeleteModal = (customer) => {
+    setDeletingCustomer(customer);
+    setShowDeleteModal(true);
+    setDeleteError(null);
+    setDeleteSuccess(null);
+  };
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setDeletingCustomer(null);
+    setDeleteError(null);
+    setDeleteSuccess(null);
+  };
+
+  const handleDeleteCustomer = async () => {
+    try {
+      setDeleteLoading(true);
+      setDeleteError(null);
+      
+      const response = await axios.delete(`http://localhost:5000/api/customers/${deletingCustomer.customer_id}`);
+      
+      setDeleteSuccess('Customer deleted successfully!');
+      
+      // Refresh the customers list
+      setTimeout(() => {
+        fetchCustomers(pagination.currentPage, searchQuery, searchType);
+        closeDeleteModal();
+      }, 1500);
+      
+    } catch (err) {
+      setDeleteError(err.response?.data?.error || 'Failed to delete customer');
+      console.error('Error deleting customer:', err);
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
   };
@@ -291,6 +333,12 @@ const CustomersPage = ({ onBackToHome }) => {
                       className="edit-button"
                     >
                       Edit
+                    </button>
+                    <button 
+                      onClick={() => openDeleteModal(customer)}
+                      className="delete-button"
+                    >
+                      Delete
                     </button>
                   </td>
                 </tr>
@@ -506,6 +554,62 @@ const CustomersPage = ({ onBackToHome }) => {
                     </button>
                   </div>
                 </form>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteModal && deletingCustomer && (
+          <div className="modal-overlay" onClick={closeDeleteModal}>
+            <div className="modal-content delete-customer-modal" onClick={(e) => e.stopPropagation()}>
+              <button className="close-button" onClick={closeDeleteModal}>×</button>
+              
+              <h2 className="modal-title">Delete Customer</h2>
+              
+              {deleteLoading && !deleteSuccess ? (
+                <div className="loading">Deleting customer...</div>
+              ) : (
+                <div className="delete-confirmation">
+                  <div className="warning-message">
+                    <p>⚠️ Are you sure you want to delete this customer?</p>
+                    <div className="customer-info">
+                      <p><strong>Name:</strong> {deletingCustomer.first_name} {deletingCustomer.last_name}</p>
+                      <p><strong>Email:</strong> {deletingCustomer.email}</p>
+                      <p><strong>Customer ID:</strong> #{deletingCustomer.customer_id}</p>
+                    </div>
+                    <p className="warning-text">This action will deactivate the customer account. They will no longer be able to rent films.</p>
+                  </div>
+                  
+                  {deleteError && (
+                    <div className="error-message">
+                      {deleteError}
+                    </div>
+                  )}
+                  
+                  {deleteSuccess && (
+                    <div className="success-message">
+                      {deleteSuccess}
+                    </div>
+                  )}
+                  
+                  <div className="form-actions">
+                    <button 
+                      type="button" 
+                      onClick={closeDeleteModal}
+                      className="cancel-button"
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      onClick={handleDeleteCustomer}
+                      className="delete-confirm-button"
+                      disabled={deleteLoading}
+                    >
+                      {deleteLoading ? 'Deleting...' : 'Yes, Delete Customer'}
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
           </div>
