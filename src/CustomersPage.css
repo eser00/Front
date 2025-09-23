@@ -315,6 +315,12 @@
   max-width: 600px;
 }
 
+.customer-details-modal {
+  max-width: 1000px;
+  max-height: 90vh;
+  width: 95%;
+}
+
 .close-button {
   position: absolute;
   top: 15px;
@@ -547,6 +553,192 @@
   transform: none;
 }
 
+/* Customer Details Modal Styles */
+.customer-details-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 25px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.customer-info-section {
+  background: rgba(139, 69, 19, 0.05);
+  border: 1px solid rgba(139, 69, 19, 0.2);
+  padding: 25px;
+  border-radius: 0;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.rental-stats-section {
+  background: rgba(139, 69, 19, 0.05);
+  border: 1px solid rgba(139, 69, 19, 0.2);
+  padding: 25px;
+  border-radius: 0;
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.rental-history-section {
+  background: rgba(139, 69, 19, 0.05);
+  border: 1px solid rgba(139, 69, 19, 0.2);
+  padding: 25px;
+  border-radius: 0;
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+.customer-info-section h3,
+.rental-stats-section h3,
+.rental-history-section h3 {
+  color: #d4af37;
+  margin: 0 0 20px 0;
+  font-size: 1.4rem;
+  font-weight: 400;
+  font-family: 'Kugile', 'Playfair Display', serif;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+  padding-bottom: 10px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.info-item label {
+  color: #c9a96e;
+  font-size: 0.9rem;
+  font-weight: 500;
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.info-item span {
+  color: #e0e0e0;
+  font-size: 1rem;
+  font-weight: 400;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.stat-item {
+  text-align: center;
+  background: rgba(212, 175, 55, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  padding: 20px;
+  border-radius: 0;
+  transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: rgba(212, 175, 55, 0.4);
+  transform: translateY(-2px);
+}
+
+.stat-item .stat-number {
+  color: #f4d03f;
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.stat-item .stat-label {
+  color: #c9a96e;
+  font-size: 0.9rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.rental-history-table {
+  overflow-x: auto;
+}
+
+.rental-history-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.rental-history-table th {
+  background: linear-gradient(135deg, #252525 0%, #323232 100%);
+  color: #d4af37;
+  padding: 15px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.rental-history-table td {
+  color: #e0e0e0;
+  padding: 12px;
+  border-bottom: 1px solid rgba(139, 69, 19, 0.2);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  font-size: 0.9rem;
+}
+
+.rental-history-table tbody tr:hover {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(139, 69, 19, 0.05) 100%);
+}
+
+.film-title {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.rental-status {
+  padding: 4px 8px;
+  border-radius: 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.rental-status.returned {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.rental-status.active {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.no-rentals {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-family: 'Montserrat', sans-serif;
+  font-style: italic;
+}
+
 .customers-table-container {
   background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
   border-radius: 0;
@@ -635,49 +827,58 @@
 
 .customer-actions {
   text-align: center;
+  padding: 10px;
+}
+
+.customer-actions button {
+  margin: 2px;
+  padding: 6px 12px;
+  border-radius: 0;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  min-width: 80px;
+}
+
+.details-button {
+  background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
+  color: #ffffff;
+  border-color: rgba(23, 162, 184, 0.5);
+}
+
+.details-button:hover {
+  background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(23, 162, 184, 0.3);
 }
 
 .edit-button {
   background: linear-gradient(135deg, #c9a96e 0%, #d4af37 100%);
   color: #1a1a1a;
-  border: 1px solid rgba(139, 69, 19, 0.5);
-  padding: 8px 16px;
-  border-radius: 0;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  font-family: 'Montserrat', sans-serif;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  border-color: rgba(139, 69, 19, 0.5);
 }
 
 .edit-button:hover {
   background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(212, 175, 55, 0.3);
 }
 
 .delete-button {
   background: linear-gradient(135deg, #dc3545 0%, #ff4757 100%);
   color: #ffffff;
-  border: 1px solid rgba(220, 53, 69, 0.5);
-  padding: 8px 16px;
-  border-radius: 0;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  font-family: 'Montserrat', sans-serif;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  margin-left: 8px;
+  border-color: rgba(220, 53, 69, 0.5);
 }
 
 .delete-button:hover {
   background: linear-gradient(135deg, #ff4757 0%, #dc3545 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(220, 53, 69, 0.3);
 }
 
 .pagination {
@@ -765,5 +966,57 @@
   .pagination {
     flex-direction: column;
     gap: 15px;
+  }
+
+  /* Customer Details Modal Mobile */
+  .customer-details-modal {
+    width: 98%;
+    max-width: 98%;
+  }
+
+  .customer-details-content {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 20px;
+  }
+
+  .customer-info-section {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .rental-stats-section {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .rental-history-section {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .rental-history-table {
+    overflow-x: auto;
+  }
+
+  .rental-history-table table {
+    min-width: 500px;
+  }
+
+  /* Action buttons mobile */
+  .customer-actions {
+    padding: 5px;
+  }
+
+  .customer-actions button {
+    margin: 1px;
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    min-width: 60px;
   }
 }

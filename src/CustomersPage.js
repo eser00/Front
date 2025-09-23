@@ -22,6 +22,11 @@ const CustomersPage = ({ onBackToHome }) => {
   const [deleteError, setDeleteError] = useState(null);
   const [deleteSuccess, setDeleteSuccess] = useState(null);
   const [deletingCustomer, setDeletingCustomer] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [detailsLoading, setDetailsLoading] = useState(false);
+  const [detailsError, setDetailsError] = useState(null);
+  const [customerDetails, setCustomerDetails] = useState(null);
+  const [rentalHistory, setRentalHistory] = useState([]);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -213,6 +218,36 @@ const CustomersPage = ({ onBackToHome }) => {
     }
   };
 
+  const openDetailsModal = async (customer) => {
+    try {
+      setDetailsLoading(true);
+      setDetailsError(null);
+      setShowDetailsModal(true);
+      
+      // Fetch detailed customer information and rental history
+      const [detailsResponse, historyResponse] = await Promise.all([
+        axios.get(`http://localhost:5000/api/customers/${customer.customer_id}/details`),
+        axios.get(`http://localhost:5000/api/customers/${customer.customer_id}/rentals`)
+      ]);
+      
+      setCustomerDetails(detailsResponse.data);
+      setRentalHistory(historyResponse.data);
+      
+    } catch (err) {
+      setDetailsError(err.response?.data?.error || 'Failed to load customer details');
+      console.error('Error loading customer details:', err);
+    } finally {
+      setDetailsLoading(false);
+    }
+  };
+
+  const closeDetailsModal = () => {
+    setShowDetailsModal(false);
+    setCustomerDetails(null);
+    setRentalHistory([]);
+    setDetailsError(null);
+  };
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
   };
@@ -328,6 +363,12 @@ const CustomersPage = ({ onBackToHome }) => {
                     </span>
                   </td>
                   <td className="customer-actions">
+                    <button 
+                      onClick={() => openDetailsModal(customer)}
+                      className="details-button"
+                    >
+                      View Details
+                    </button>
                     <button 
                       onClick={() => openEditModal(customer)}
                       className="edit-button"
@@ -611,6 +652,120 @@ const CustomersPage = ({ onBackToHome }) => {
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Customer Details Modal */}
+        {showDetailsModal && (
+          <div className="modal-overlay" onClick={closeDetailsModal}>
+            <div className="modal-content customer-details-modal" onClick={(e) => e.stopPropagation()}>
+              <button className="close-button" onClick={closeDetailsModal}>×</button>
+              
+              <h2 className="modal-title">Customer Details</h2>
+              
+              {detailsLoading ? (
+                <div className="loading">Loading customer details...</div>
+              ) : detailsError ? (
+                <div className="error-message">{detailsError}</div>
+              ) : customerDetails ? (
+                <div className="customer-details-content">
+                  {/* Customer Information Section */}
+                  <div className="customer-info-section">
+                    <h3>Customer Information</h3>
+                    <div className="info-grid">
+                      <div className="info-item">
+                        <label>Customer ID:</label>
+                        <span>#{customerDetails.customer_id}</span>
+                      </div>
+                      <div className="info-item">
+                        <label>Name:</label>
+                        <span>{customerDetails.first_name} {customerDetails.last_name}</span>
+                      </div>
+                      <div className="info-item">
+                        <label>Email:</label>
+                        <span>{customerDetails.email}</span>
+                      </div>
+                      <div className="info-item">
+                        <label>Store:</label>
+                        <span>Store {customerDetails.store_id}</span>
+                      </div>
+                      <div className="info-item">
+                        <label>Member Since:</label>
+                        <span>{formatDate(customerDetails.create_date)}</span>
+                      </div>
+                      <div className="info-item">
+                        <label>Status:</label>
+                        <span className={`status-badge ${customerDetails.active ? 'active' : 'inactive'}`}>
+                          {customerDetails.active ? 'Active' : 'Inactive'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Rental Statistics Section */}
+                  <div className="rental-stats-section">
+                    <h3>Rental Statistics</h3>
+                    <div className="stats-grid">
+                      <div className="stat-item">
+                        <div className="stat-number">{customerDetails.total_rentals || 0}</div>
+                        <div className="stat-label">Total Rentals</div>
+                      </div>
+                      <div className="stat-item">
+                        <div className="stat-number">{customerDetails.active_rentals || 0}</div>
+                        <div className="stat-label">Active Rentals</div>
+                      </div>
+                      <div className="stat-item">
+                        <div className="stat-number">${customerDetails.total_spent || 0}</div>
+                        <div className="stat-label">Total Spent</div>
+                      </div>
+                      <div className="stat-item">
+                        <div className="stat-number">{customerDetails.favorite_genre || 'N/A'}</div>
+                        <div className="stat-label">Favorite Genre</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Rental History Section */}
+                  <div className="rental-history-section">
+                    <h3>Rental History</h3>
+                    {rentalHistory.length > 0 ? (
+                      <div className="rental-history-table">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Film</th>
+                              <th>Rental Date</th>
+                              <th>Return Date</th>
+                              <th>Status</th>
+                              <th>Amount</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {rentalHistory.map((rental, index) => (
+                              <tr key={index}>
+                                <td className="film-title">{rental.film_title}</td>
+                                <td>{formatDate(rental.rental_date)}</td>
+                                <td>{rental.return_date ? formatDate(rental.return_date) : 'Not returned'}</td>
+                                <td>
+                                  <span className={`rental-status ${rental.return_date ? 'returned' : 'active'}`}>
+                                    {rental.return_date ? 'Returned' : 'Active'}
+                                  </span>
+                                </td>
+                                <td>${rental.rental_rate}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="no-rentals">
+                        <p>No rental history found for this customer.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
         )}
