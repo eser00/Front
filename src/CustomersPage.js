@@ -27,6 +27,9 @@ const CustomersPage = ({ onBackToHome }) => {
   const [detailsError, setDetailsError] = useState(null);
   const [customerDetails, setCustomerDetails] = useState(null);
   const [rentalHistory, setRentalHistory] = useState([]);
+  const [returnLoading, setReturnLoading] = useState(false);
+  const [returnError, setReturnError] = useState(null);
+  const [returnSuccess, setReturnSuccess] = useState(null);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -246,6 +249,44 @@ const CustomersPage = ({ onBackToHome }) => {
     setCustomerDetails(null);
     setRentalHistory([]);
     setDetailsError(null);
+    setReturnError(null);
+    setReturnSuccess(null);
+  };
+
+  const handleReturnRental = async (rentalId, filmTitle) => {
+    try {
+      setReturnLoading(true);
+      setReturnError(null);
+      setReturnSuccess(null);
+      
+      console.log('Attempting to return rental:', rentalId, 'for film:', filmTitle);
+      
+      const response = await axios.put(`http://localhost:5000/api/rentals/${rentalId}/return`);
+      
+      console.log('Return rental response:', response.data);
+      
+      if (response.data.success) {
+        setReturnSuccess(`Successfully returned "${filmTitle}"`);
+        
+        // Refresh rental history to show updated status
+        if (customerDetails) {
+          const historyResponse = await axios.get(`http://localhost:5000/api/customers/${customerDetails.customer_id}/rentals`);
+          setRentalHistory(historyResponse.data);
+        }
+        
+        // Clear success message after 3 seconds
+        setTimeout(() => {
+          setReturnSuccess(null);
+        }, 3000);
+      }
+      
+    } catch (err) {
+      console.error('Error returning rental:', err);
+      console.error('Error response:', err.response?.data);
+      setReturnError(err.response?.data?.error || 'Failed to return rental');
+    } finally {
+      setReturnLoading(false);
+    }
   };
 
   const formatDate = (dateString) => {
@@ -729,6 +770,20 @@ const CustomersPage = ({ onBackToHome }) => {
                   {/* Rental History Section */}
                   <div className="rental-history-section">
                     <h3>Rental History</h3>
+                    
+                    {/* Return Messages */}
+                    {returnSuccess && (
+                      <div className="success-message">
+                        {returnSuccess}
+                      </div>
+                    )}
+                    
+                    {returnError && (
+                      <div className="error-message">
+                        {returnError}
+                      </div>
+                    )}
+                    
                     {rentalHistory.length > 0 ? (
                       <div className="rental-history-table">
                         <table>
@@ -739,6 +794,7 @@ const CustomersPage = ({ onBackToHome }) => {
                               <th>Return Date</th>
                               <th>Status</th>
                               <th>Amount</th>
+                              <th>Actions</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -753,6 +809,17 @@ const CustomersPage = ({ onBackToHome }) => {
                                   </span>
                                 </td>
                                 <td>${rental.rental_rate}</td>
+                                <td>
+                                  {!rental.return_date && (
+                                    <button
+                                      className="return-button"
+                                      onClick={() => handleReturnRental(rental.rental_id, rental.film_title)}
+                                      disabled={returnLoading}
+                                    >
+                                      {returnLoading ? 'Returning...' : 'Return'}
+                                    </button>
+                                  )}
+                                </td>
                               </tr>
                             ))}
                           </tbody>
