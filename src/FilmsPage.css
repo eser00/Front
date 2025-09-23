@@ -363,8 +363,9 @@
 .modal-content {
   background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
   border-radius: 0;
-  padding: 40px;
-  max-width: 900px;
+  padding: 60px;
+  max-width: 1400px;
+  width: 95%;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
@@ -441,29 +442,32 @@
 
 .film-details-title {
   color: #d4af37;
-  margin: 0 0 30px 0;
-  font-size: 2.5rem;
+  margin: 0 0 50px 0;
+  font-size: 2.8rem;
   font-weight: 400;
   font-family: 'Kugile', 'Playfair Display', serif;
   letter-spacing: 0.02em;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   position: relative;
   z-index: 1;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(212, 175, 55, 0.4);
+  padding-bottom: 25px;
+  text-align: center;
 }
 
 .film-details-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 40px;
+  margin-top: 40px;
 }
 
 .film-details-section {
   background: linear-gradient(135deg, #252525 0%, #323232 100%);
-  padding: 20px;
+  padding: 35px;
   border-radius: 8px;
   border-left: 4px solid #d4af37;
+  margin-bottom: 30px;
 }
 
 .film-details-section.full-width {
@@ -472,25 +476,25 @@
 
 .film-details-section h3 {
   color: #d4af37;
-  margin: 0 0 25px 0;
-  font-size: 1.5rem;
+  margin: 0 0 35px 0;
+  font-size: 1.6rem;
   font-weight: 400;
   font-family: 'Kugile', 'Playfair Display', serif;
   letter-spacing: 0.02em;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-  padding-bottom: 10px;
+  padding-bottom: 15px;
   position: relative;
   z-index: 2;
 }
 
 .film-details-section p {
-  margin: 12px 0;
+  margin: 18px 0;
   color: #e0e0e0;
-  line-height: 1.7;
+  line-height: 1.8;
   font-family: 'Montserrat', sans-serif;
   font-weight: 300;
-  font-size: 0.95rem;
+  font-size: 1rem;
   letter-spacing: 0.01em;
   position: relative;
   z-index: 2;
@@ -562,12 +566,25 @@
   font-family: 'Montserrat', sans-serif;
   font-weight: 300;
   transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
 }
 
 .form-group select:focus {
   outline: none;
   border-color: #d4af37;
   box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+.form-group select option {
+  background: #252525;
+  color: #e0e0e0;
+  padding: 8px;
+  border: none;
 }
 
 .no-inventory {
